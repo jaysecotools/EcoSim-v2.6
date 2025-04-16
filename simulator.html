@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasmanian Ecosystem Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1><i class="fas fa-leaf"></i> Tasmanian Ecosystem Simulator</h1>
+      <div class="header-badges">
+        <div class="points-badge">
+          <i class="fas fa-star"></i>
+          <span id="pointsDisplay">0</span> pts
+        </div>
+        <div id="medalIcon" class="ranger-medal" style="display:none">
+          <i class="fas fa-medal"></i>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-container">
+      <!-- Left Panel -->
+      <div class="control-panel">
+        <div class="panel-section">
+          <h2><i class="fas fa-sliders-h"></i> Ecosystem Controls</h2>
+          
+          <div class="control-group">
+            <label>
+              <span class="control-label"><i class="fas fa-cloud-rain"></i> Rainfall</span>
+              <input type="range" min="0" max="100" value="50" id="rainfall">
+              <span id="rainfallValue" class="slider-value">50</span>
+            </label>
+          </div>
+
+          <div class="control-group">
+            <label>
+              <span class="control-label"><i class="fas fa-temperature-high"></i> Temperature</span>
+              <input type="range" min="0" max="50" value="25" id="temperature">
+              <span id="temperatureValue" class="slider-value">25</span>
+            </label>
+          </div>
+
+          <div class="control-group">
+            <label>
+              <span class="control-label"><i class="fas fa-bug"></i> Invasive Species</span>
+              <input type="range" min="0" max="20" value="5" id="invasiveSpecies">
+              <span id="invasiveSpeciesValue" class="slider-value">5</span>
+            </label>
+          </div>
+
+          <div class="control-group">
+            <label>
+              <span class="control-label"><i class="fas fa-user"></i> Human Impact</span>
+              <input type="range" min="0" max="10" value="2" id="humanImpact">
+              <span id="humanImpactValue" class="slider-value">2</span>
+            </label>
+          </div>
+
+          <div class="button-group">
+            <button id="resetButton" class="btn btn-secondary">
+              <i class="fas fa-redo"></i> Reset
+            </button>
+            <button id="pauseButton" class="btn btn-primary">
+              <i class="fas fa-pause"></i> Pause
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <h2><i class="fas fa-cog"></i> Simulation Settings</h2>
+          <div class="toggle-group">
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleSeasons" checked>
+              <span class="toggle-label"><i class="fas fa-calendar-alt"></i> Seasons</span>
+              <span class="toggle-slider"></span>
+            </label>
+            
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleDisasters" checked>
+              <span class="toggle-label"><i class="fas fa-fire"></i> Disasters</span>
+              <span class="toggle-slider"></span>
+            </label>
+            
+            <label class="toggle-switch">
+              <input type="checkbox" id="toggleGrassLimit" checked>
+              <span class="toggle-label"><i class="fas fa-flag"></i> Grass Limits</span>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="speed-control">
+            <label><i class="fas fa-tachometer-alt"></i> Speed</label>
+            <input type="range" id="speedSlider" min="0.1" max="5" step="0.1" value="1">
+            <span id="speedValue">1x</span>
+          </div>
+        </div>
+
+        <div class="panel-section ecosystem-health">
+          <h2><i class="fas fa-heartbeat"></i> Ecosystem Health</h2>
+          <div id="ecosystemHealth" class="health-meter">
+            <div class="health-status" style="width: 100%"></div>
+            <span class="health-text">Healthy</span>
+          </div>
+          <div class="health-metrics">
+            <div class="metric">
+              <span class="metric-label">Biodiversity:</span>
+              <span class="metric-value" id="biodiversityValue">0.75</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Season:</span>
+              <span class="metric-value" id="seasonDisplay">Spring</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="visualization-container">
+          <div id="canvas-container"></div>
+          <div id="disasterMessage" class="alert-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span class="message-text">Bushfire occurred! Grass reduced by 30%</span>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="populationChart"></canvas>
+        </div>
+
+        <div class="objective-panel">
+          <h2><i class="fas fa-tasks"></i> Current Objective</h2>
+          <div id="objectiveDisplay" class="objective-text">
+            Increase pademelon population to 200
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" style="width: 45%"></div>
+            <span class="progress-text">45% complete</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="info-panel">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="species"><i class="fas fa-paw"></i> Species</button>
+          <button class="tab-btn" data-tab="objectives"><i class="fas fa-trophy"></i> Achievements</button>
+          <button class="tab-btn" data-tab="learn"><i class="fas fa-book"></i> Learn</button>
+        </div>
+
+        <div class="tab-content active" id="species-tab">
+          <div class="species-card">
+            <div class="species-icon" style="background-color: #4CAF50;">
+              <i class="fas fa-seedling"></i>
+            </div>
+            <h3>Grass</h3>
+            <p>Primary producer that supports the entire ecosystem. Current: <strong id="grass-value">100</strong></p>
+          </div>
+          
+          <div class="species-card">
+            <div class="species-icon" style="background-color: #FF9800;">
+              <i class="fas fa-kiwi-bird"></i>
+            </div>
+            <h3>Pademelons</h3>
+            <p>Herbivores that feed on grass. Current: <strong id="pademelons-value">50</strong></p>
+          </div>
+          
+          <div class="species-card">
+            <div class="species-icon" style="background-color: #F44336;">
+              <i class="fas fa-paw"></i>
+            </div>
+            <h3>Tasmanian Devils</h3>
+            <p>Apex predators that control pademelon population. Current: <strong id="devils-value">10</strong></p>
+          </div>
+          
+          <div class="species-card">
+            <div class="species-icon" style="background-color: #FFEB3B;">
+              <i class="fas fa-spider"></i>
+            </div>
+            <h3>Bandicoots</h3>
+            <p>Keystone species that improve soil health. Current: <strong id="bandicoots-value">30</strong></p>
+          </div>
+        </div>
+
+        <div class="tab-content" id="objectives-tab">
+          <div id="achievementsContainer" class="achievements-grid">
+            <!-- Achievements will be added here dynamically -->
+          </div>
+        </div>
+
+        <div class="tab-content" id="learn-tab">
+          <div class="learn-section">
+            <h3><i class="fas fa-question-circle"></i> Quick Quiz</h3>
+            <div class="quiz-question">
+              <p>What happens when devil populations grow too large?</p>
+              <button class="quiz-btn" onclick="showAnswer('quiz1-answer')">Show Answer</button>
+              <p id="quiz1-answer" class="quiz-answer">They overhunt pademelons, leading to grass overgrowth and eventual ecosystem collapse.</p>
+            </div>
+          </div>
+          
+          <div class="learn-section">
+            <h3><i class="fas fa-lightbulb"></i> Did You Know?</h3>
+            <p>Bandicoots are ecosystem engineers - their digging aerates soil and helps grass grow 15-20% faster!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="rangerBadge" class="ranger-badge-modal" style="display: none;">
+      <div class="badge-content">
+        <div class="badge-icon">
+          <i class="fas fa-medal"></i>
+        </div>
+        <h2>Ranger Badge Earned!</h2>
+        <p>Congratulations on maintaining a balanced ecosystem!</p>
+        <button class="btn btn-primary" onclick="document.getElementById('rangerBadge').style.display='none'">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
