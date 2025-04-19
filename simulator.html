@@ -7,8 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <!-- Load p5.js and Chart.js before your script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Add defer to ensure script loads after DOM is ready -->
+  <script src="script.js" defer></script>
 </head>
 <body>
   <div class="app-container">
@@ -111,7 +114,7 @@
           <div class="health-metrics">
             <div class="metric">
               <span class="metric-label">Biodiversity:</span>
-              <span class="metric-value" id="biodiversityValue">0.75</span>
+              <span class="metric-value" id="biodiversityValue">0.00</span>
             </div>
             <div class="metric">
               <span class="metric-label">Season:</span>
@@ -127,7 +130,7 @@
           <div id="canvas-container"></div>
           <div id="disasterMessage" class="alert-message">
             <i class="fas fa-exclamation-triangle"></i>
-            <span class="message-text">Bushfire occurred! Grass reduced by 30%</span>
+            <span class="message-text"></span>
           </div>
         </div>
 
@@ -141,8 +144,8 @@
             Increase pademelon population to 200
           </div>
           <div class="progress-container">
-            <div class="progress-bar" style="width: 45%"></div>
-            <span class="progress-text">45% complete</span>
+            <div class="progress-bar" style="width: 0%"></div>
+            <span class="progress-text">0% complete</span>
           </div>
         </div>
       </div>
@@ -161,7 +164,7 @@
               <i class="fas fa-seedling"></i>
             </div>
             <h3>Grass</h3>
-            <p>Primary producer that supports the entire ecosystem. Current: <strong id="grass-value">100</strong></p>
+            <p>Primary producer that supports the entire ecosystem. Current: <strong id="grass-value">0</strong></p>
           </div>
           
           <div class="species-card">
@@ -169,7 +172,7 @@
               <i class="fas fa-kiwi-bird"></i>
             </div>
             <h3>Pademelons</h3>
-            <p>Herbivores that feed on grass. Current: <strong id="pademelons-value">50</strong></p>
+            <p>Herbivores that feed on grass. Current: <strong id="pademelons-value">0</strong></p>
           </div>
           
           <div class="species-card">
@@ -177,7 +180,7 @@
               <i class="fas fa-paw"></i>
             </div>
             <h3>Tasmanian Devils</h3>
-            <p>Apex predators that control pademelon population. Current: <strong id="devils-value">10</strong></p>
+            <p>Apex predators that control pademelon population. Current: <strong id="devils-value">0</strong></p>
           </div>
           
           <div class="species-card">
@@ -185,7 +188,7 @@
               <i class="fas fa-spider"></i>
             </div>
             <h3>Bandicoots</h3>
-            <p>Keystone species that improve soil health. Current: <strong id="bandicoots-value">30</strong></p>
+            <p>Keystone species that improve soil health. Current: <strong id="bandicoots-value">0</strong></p>
           </div>
         </div>
 
@@ -200,8 +203,8 @@
             <h3><i class="fas fa-question-circle"></i> Quick Quiz</h3>
             <div class="quiz-question">
               <p>What happens when devil populations grow too large?</p>
-              <button class="quiz-btn" onclick="showAnswer('quiz1-answer')">Show Answer</button>
-              <p id="quiz1-answer" class="quiz-answer">They overhunt pademelons, leading to grass overgrowth and eventual ecosystem collapse.</p>
+              <button class="quiz-btn" onclick="document.getElementById('quiz1-answer').style.display='block'">Show Answer</button>
+              <p id="quiz1-answer" class="quiz-answer" style="display:none">They overhunt pademelons, leading to grass overgrowth and eventual ecosystem collapse.</p>
             </div>
           </div>
           
@@ -224,7 +227,5 @@
       </div>
     </div>
   </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
